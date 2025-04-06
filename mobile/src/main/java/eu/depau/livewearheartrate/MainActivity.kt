@@ -137,8 +137,7 @@ fun HeartRate(viewModel: AppViewModel, modifier: Modifier = Modifier) {
                         50.0,
                         180.0
                     ),
-
-                    ),
+                ),
                 startAxis = VerticalAxis.rememberStart(),
                 bottomAxis = HorizontalAxis.rememberBottom(),
                 decorations = listOf(
