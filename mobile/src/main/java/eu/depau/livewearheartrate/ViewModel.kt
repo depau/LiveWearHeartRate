@@ -5,7 +5,7 @@ import eu.depau.livewearheartrate.shared.SensorsDTO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-private const val KEEP_LAST_SECONDS = 60
+const val KEEP_LAST_SECONDS = 65
 
 data class AppState(
     val lastReading: SensorsDTO = SensorsDTO(0.0, 0L),

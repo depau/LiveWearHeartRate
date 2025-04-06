@@ -18,6 +18,7 @@ kotlinxCoroutinesPlayServices = "1.8.0"
 lifecycle = "2.8.7"
 material = "1.12.0"
 playServicesWearable = "19.0.0"
+vico = "2.1.2"
 wearToolingPreview = "1.0.0"
 
 [libraries]
@@ -47,6 +48,8 @@ lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtim
 lifecycle-service = { group = "androidx.lifecycle", name = "lifecycle-service", version.ref = "lifecycle" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 play-services-wearable = { group = "com.google.android.gms", name = "play-services-wearable", version.ref = "playServicesWearable" }
+vico-compose = { group = "com.patrykandpatrick.vico", name = "compose", version.ref = "vico" }
+vico-compose-m3 = { group = "com.patrykandpatrick.vico", name = "compose-m3", version.ref = "vico" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

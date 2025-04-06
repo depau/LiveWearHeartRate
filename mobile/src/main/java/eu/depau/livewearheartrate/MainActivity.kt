@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -17,7 +19,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -29,6 +30,17 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.google.android.gms.wearable.MessageEvent
 import com.google.android.gms.wearable.Wearable
+import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
+import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottom
+import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStart
+import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineCartesianLayer
+import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
+import com.patrykandpatrick.vico.compose.cartesian.rememberVicoScrollState
+import com.patrykandpatrick.vico.core.cartesian.axis.HorizontalAxis
+import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
+import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
+import com.patrykandpatrick.vico.core.cartesian.data.CartesianLayerRangeProvider
+import com.patrykandpatrick.vico.core.cartesian.data.lineSeries
 import eu.depau.livewearheartrate.shared.SensorsDTO
 import eu.depau.livewearheartrate.shared.unmarshall
 import eu.depau.livewearheartrate.ui.theme.LiveWearHeartRateTheme
@@ -96,6 +108,49 @@ fun HeartRate(viewModel: AppViewModel, modifier: Modifier = Modifier) {
             delay(100L)
             timeAgo = System.currentTimeMillis() - state.lastReading.timestamp
         }
+
+        Spacer(modifier = Modifier.padding(16.dp))
+
+        val modelProducer = remember { CartesianChartModelProducer() }
+        LaunchedEffect(state.heartRateHistory) {
+            if (state.heartRateHistory.isEmpty()) return@LaunchedEffect
+
+            modelProducer.runTransaction {
+                lineSeries {
+                    series(
+                        state.heartRateHistory.map { (it.timestamp - System.currentTimeMillis()) / 1000 },
+                        state.heartRateHistory.map { it.heartRate },
+                    )
+                }
+            }
+        }
+
+        CartesianChartHost(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(250.dp),
+            chart = rememberCartesianChart(
+                rememberLineCartesianLayer(
+                    rangeProvider = CartesianLayerRangeProvider.fixed(
+                        -KEEP_LAST_SECONDS.toDouble()+5,
+                        0.0,
+                        50.0,
+                        180.0
+                    ),
+
+                    ),
+                startAxis = VerticalAxis.rememberStart(),
+                bottomAxis = HorizontalAxis.rememberBottom(),
+                decorations = listOf(
+                    rememberModerateZoneBox(),
+                    rememberVigorousZoneBox(),
+                    rememberMaxZoneBox(),
+                )
+            ),
+            modelProducer = modelProducer,
+            scrollState = rememberVicoScrollState(scrollEnabled = false),
+            animationSpec = null,
+        )
 
         Spacer(modifier = Modifier.padding(16.dp))
 
