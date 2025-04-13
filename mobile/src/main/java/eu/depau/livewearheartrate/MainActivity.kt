@@ -2,6 +2,7 @@ package eu.depau.livewearheartrate
 
 import android.os.Bundle
 import android.util.Log
+import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -17,6 +18,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -61,6 +63,13 @@ class MainActivity : ComponentActivity() {
         mDataLayerListener = messageClientListener(mMessageClient, ::onMessageReceived)
 
         setContent {
+            DisposableEffect(Unit) {
+                window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                onDispose {
+                    window?.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                }
+            }
+
             LiveWearHeartRateTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     HeartRate(
